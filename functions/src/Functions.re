@@ -17,4 +17,6 @@ Js.log2(
   Js.Float.toFixedWithPrecision(amount, ~digits=2),
 );
 
-let sqr = x => x * x;
+let sqr = x => {
+  x * x;
+};
