@@ -11,11 +11,20 @@ function windchill(t, v) {
   return 13.12 + 0.6215 * t - 11.37 * Math.pow(v, 0.16) + 0.3965 * t * Math.pow(v, 0.16);
 }
 
+function windchill2(t, v) {
+  return 13.12 + 0.6215 * t - 11.37 * Math.pow(v, 0.16) + 0.3965 * t * Math.pow(v, 0.16);
+}
+
 var result = windchill(5.0, 20.0);
 
-console.log(Pervasives.string_of_float(result));
+console.log("the windchill temperature is " + Pervasives.string_of_float(result));
+
+var result$1 = windchill2(5.0, 20.0);
+
+console.log("the windchill(2) temperature is " + Pervasives.string_of_float(result$1));
 
 exports.pow = pow;
 exports.windchill = windchill;
-exports.result = result;
+exports.windchill2 = windchill2;
+exports.result = result$1;
 /* result Not a pure module */

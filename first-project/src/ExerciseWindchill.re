@@ -23,5 +23,12 @@ let windchill = (~temperature as t, ~velocity as v) => {
   *. pow(~base=v, ~exp=0.16);
 };
 
+/** bs compiles exponent operator ** to Math.pow in either case! */
+let windchill2 = (~temperature as t, ~velocity as v) => {
+  13.12 +. 0.6215 *. t -. 11.37 *. v ** 0.16 +. 0.3965 *. t *. v ** 0.16;
+};
+
 let result = windchill(~temperature=5.0, ~velocity=20.0);
-Js.log(string_of_float(result));
+Js.log("the windchill temperature is " ++ string_of_float(result));
+let result = windchill2(~temperature=5.0, ~velocity=20.0);
+Js.log("the windchill(2) temperature is " ++ string_of_float(result));
