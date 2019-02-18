@@ -49,9 +49,31 @@ function method2(input) {
 
 method2("2.0");
 
+function makeDisplayText(s) {
+  if (s !== undefined) {
+    return "The result is " + s;
+  } else {
+    return "Could not calculate result.";
+  }
+}
+
+function method3(input) {
+  var __x = toFloat(input);
+  var __x$1 = Belt_Option.flatMap(__x, reciprocal);
+  var __x$2 = Belt_Option.map(__x$1, cube);
+  console.log(makeDisplayText(Belt_Option.map(__x$2, (function (param) {
+                  return param.toFixed(3);
+                }))));
+  return /* () */0;
+}
+
+method3("2.0");
+
 exports.toFloat = toFloat;
 exports.cube = cube;
 exports.reciprocal = reciprocal;
 exports.method1 = method1;
 exports.method2 = method2;
+exports.makeDisplayText = makeDisplayText;
+exports.method3 = method3;
 /*  Not a pure module */

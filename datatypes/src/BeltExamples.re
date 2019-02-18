@@ -55,3 +55,18 @@ let method2 = (input: string): unit => {
   Js.log(resultText);
 };
 method2("2.0"); /* output: The result is 0.125 */
+
+let makeDisplayText = (s: option(string)): string =>
+  switch (s) {
+  | Some(value) => "The result is " ++ value
+  | None => "Could not calculate result."
+  };
+
+let method3 = (input: string): unit =>
+  toFloat(input)
+  ->Belt.Option.flatMap(_, reciprocal)
+  ->Belt.Option.map(_, cube)
+  ->Belt.Option.map(_, Js.Float.toFixedWithPrecision(~digits=3))
+  ->makeDisplayText(_)
+  ->Js.log(_);
+method3("2.0"); /* output: The result is 0.125 */

@@ -33,7 +33,7 @@ let stringOfColorSpec = (cspec: colorSpec): string => {
   | White => "rgb(255,255,255)"
   | Black => "rgb(0,0,0)"
   | Gray(n) =>
-    let bytes = 255. *. n;
+    let bytes = int_of_float(255. *. n);
     {j|rgb($bytes,$bytes,$bytes)|j};
   | RGB(r, g, b) => {j|rgb($r,$g,$b)|j}
   };
@@ -42,4 +42,5 @@ let stringOfColorSpec = (cspec: colorSpec): string => {
 Js.log(stringOfColorSpec(White)); /* rgb(255,255,255) */
 Js.log(stringOfColorSpec(Black)); /* rgb(0,0,0) */
 Js.log(stringOfColorSpec(Gray(0.5))); /* rgb(127,127,127) */
+Js.log(stringOfColorSpec(Gray(0.66))); /* rgb(168,168,168) */
 Js.log(stringOfColorSpec(RGB(64, 128, 192))); /* rgb(64,128,192) */

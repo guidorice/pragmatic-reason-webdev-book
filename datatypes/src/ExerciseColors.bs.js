@@ -13,7 +13,7 @@ function stringOfColorSpec(cspec) {
   } else if (cspec.tag) {
     return "rgb(" + (String(cspec[0]) + ("," + (String(cspec[1]) + ("," + (String(cspec[2]) + ")")))));
   } else {
-    var bytes = 255 * cspec[0];
+    var bytes = 255 * cspec[0] | 0;
     return "rgb(" + (String(bytes) + ("," + (String(bytes) + ("," + (String(bytes) + ")")))));
   }
 }
@@ -23,6 +23,8 @@ console.log("rgb(255,255,255)");
 console.log("rgb(0,0,0)");
 
 console.log(stringOfColorSpec(/* Gray */Block.__(0, [0.5])));
+
+console.log(stringOfColorSpec(/* Gray */Block.__(0, [0.66])));
 
 console.log(stringOfColorSpec(/* RGB */Block.__(1, [
             64,
