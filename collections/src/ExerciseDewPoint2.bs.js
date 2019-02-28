@@ -84,31 +84,43 @@ var avgDewpoint = avg(dewpoints);
 
 console.log("average dewpoint: " + Pervasives.string_of_float(avgDewpoint));
 
-var maxTemps = Belt_List.reduceWithIndex(temps, /* [] */0, (function (acc, t, i) {
-        if (t === maxTemp) {
-          return /* :: */[
-                  i + 1 | 0,
-                  acc
-                ];
-        } else {
-          return acc;
-        }
+var __x = Belt_List.mapWithIndex(temps, (function (i, t) {
+        return /* tuple */[
+                i,
+                t
+              ];
       }));
 
-console.log("max temperatures occurred: ", Belt_List.toArray(maxTemps));
-
-var minTemps = Belt_List.reduceWithIndex(temps, /* [] */0, (function (acc, t, i) {
-        if (t === minTemp) {
-          return /* :: */[
-                  i + 1 | 0,
-                  acc
-                ];
-        } else {
-          return acc;
-        }
+var __x$1 = Belt_List.keep(__x, (function (param) {
+        return param[1] === maxTemp;
       }));
 
-console.log("min temperatures occurred: ", Belt_List.toArray(minTemps));
+var maxTemps = Belt_List.map(__x$1, (function (param) {
+        return param[0] + 1 | 0;
+      }));
+
+var maxTempsArray = Belt_List.toArray(maxTemps);
+
+console.log("maximum temperature observed: " + (String(maxTemp) + (" entry (" + (String(maxTempsArray) + ")"))));
+
+var __x$2 = Belt_List.mapWithIndex(temps, (function (i, t) {
+        return /* tuple */[
+                i,
+                t
+              ];
+      }));
+
+var __x$3 = Belt_List.keep(__x$2, (function (param) {
+        return param[1] === minTemp;
+      }));
+
+var minTemps = Belt_List.map(__x$3, (function (param) {
+        return param[0] + 1 | 0;
+      }));
+
+var minTempsArray = Belt_List.toArray(minTemps);
+
+console.log("minimum temperature observed: " + (String(minTemp) + (" entry (" + (String(minTempsArray) + ")"))));
 
 exports.dewpoint = dewpoint;
 exports.readings = readings;
@@ -124,5 +136,7 @@ exports.avg = avg;
 exports.avgTemp = avgTemp;
 exports.avgDewpoint = avgDewpoint;
 exports.maxTemps = maxTemps;
+exports.maxTempsArray = maxTempsArray;
 exports.minTemps = minTemps;
+exports.minTempsArray = minTempsArray;
 /*  Not a pure module */

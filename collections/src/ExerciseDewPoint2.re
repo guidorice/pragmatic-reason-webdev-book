@@ -65,23 +65,15 @@ let avgDewpoint = avg(dewpoints);
 Js.log("average dewpoint: " ++ string_of_float(avgDewpoint));
 
 let maxTemps =
-  Belt.List.reduceWithIndex(temps, [], (acc, t, i) =>
-    if (t == maxTemp) {
-      [i + 1, ...acc];
-    } else {
-      acc;
-    }
-  );
-
-Js.log2("max temperatures occurred: ", Belt.List.toArray(maxTemps));
+  Belt.List.mapWithIndex(temps, (i, t) => (i, t))
+  |> Belt.List.keep(_, ((_, t)) => t == maxTemp)
+  |> Belt.List.map(_, ((i, _)) => i + 1);
+let maxTempsArray = Belt.List.toArray(maxTemps);
+Js.log({j|maximum temperature observed: $maxTemp entry ($maxTempsArray)|j});
 
 let minTemps =
-  Belt.List.reduceWithIndex(temps, [], (acc, t, i) =>
-    if (t == minTemp) {
-      [i + 1, ...acc];
-    } else {
-      acc;
-    }
-  );
-
-Js.log2("min temperatures occurred: ", Belt.List.toArray(minTemps));
+  Belt.List.mapWithIndex(temps, (i, t) => (i, t))
+  |> Belt.List.keep(_, ((_, t)) => t == minTemp)
+  |> Belt.List.map(_, ((i, _)) => i + 1);
+let minTempsArray = Belt.List.toArray(minTemps);
+Js.log({j|minimum temperature observed: $minTemp entry ($minTempsArray)|j});
