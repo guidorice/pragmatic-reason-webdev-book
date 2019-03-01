@@ -46,7 +46,6 @@ let rec repeatRec = (s: string, accumulator: string, n: int) : string => {
 };
 Js.log(repeatRec("ha", "", 4)); /* output: hahahaha */
 
-
 let repeat = (s: string, n: int) => {
   let rec repeatHelper = (accumulator: string, counter: int) : string => {
     switch (counter) {
@@ -72,7 +71,7 @@ let rec repeatTest = (n: int, accumulatedTime: float) : float => {
 };
 let totalTime = repeatTest(1000, 0.0);
 
-Js.log2("Average time in msec:", totalTime /. 1000.0);
+Js.log2("isPalindrome (string slicing): Average time in msec:", totalTime /. 1000.0);
 
 let isPalindrome2 = (s: string) : bool => {
   let rec helper = (start: int, finish: int) => {
@@ -110,4 +109,4 @@ let rec repeatTest2 = (n: int, accumulatedTime: float) : float => {
 };
 let totalTime2 = repeatTest2(1000, 0.0);
 
-Js.log2("Average time in msec:", totalTime2 /. 1000.0);
+Js.log2("isPalindrome2 (string from closure): Average time in msec:", totalTime2 /. 1000.0);

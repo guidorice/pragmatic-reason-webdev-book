@@ -109,7 +109,7 @@ function repeatTest(_n, _accumulatedTime) {
 
 var totalTime = repeatTest(1000, 0.0);
 
-console.log("Average time in msec:", totalTime / 1000.0);
+console.log("isPalindrome (string slicing): Average time in msec:", totalTime / 1000.0);
 
 function isPalindrome2(s) {
   var _start = 0;
@@ -154,7 +154,7 @@ function repeatTest2(_n, _accumulatedTime) {
 
 var totalTime2 = repeatTest2(1000, 0.0);
 
-console.log("Average time in msec:", totalTime2 / 1000.0);
+console.log("isPalindrome2 (string from closure): Average time in msec:", totalTime2 / 1000.0);
 
 exports.isPalindrome = isPalindrome;
 exports.isPalindromeLogged = isPalindromeLogged;
