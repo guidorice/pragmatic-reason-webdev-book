@@ -26,7 +26,30 @@ module Size = {
       Some(XLarge(String.length(s) - 1))
     | _ => None
     };
+
+  let compareSize = (a: t, b: t) : int => {
+      switch (a, b) {
+        /* xsmall(n) special cases */
+        | (XSmall(s1), XSmall(s2)) when s1 == s2 => 0
+        | (XSmall(s1), XSmall(s2)) => s1 < s2 ? -1 : 1
+        | (XSmall(_), Small|Medium|Large|XLarge(_)) => -1
+        | (Small|Medium|Large|XLarge(_), XSmall(_)) => 1
+        /* xlarge(n) special cases */
+        | (XLarge(s1), XLarge(s2)) when s1 == s2 => 0
+        | (XLarge(s1), XLarge(s2)) => s1 < s2 ? -1 : 1
+        | (XLarge(_), Small|Medium|Large) => 1
+        | (Small|Medium|Large, XLarge(_)) => -1
+        /* all other cases, use builtin compare */
+        | (s1, s2) => compare(s1, s2)
+      }
+   };
 };
+
+module SizeComparator =
+  Belt.Id.MakeComparable({ 
+    type t = Size.t; 
+    let cmp = Size.compareSize; 
+  });
 
 module Sleeve = {
   type t =
@@ -49,6 +72,12 @@ module Sleeve = {
     | _ => None
     };
 };
+
+module SleeveComparator =
+  Belt.Id.MakeComparable({ 
+    type t = Sleeve.t; 
+    let cmp = compare; 
+  });
 
 module Color = {
   type t =
@@ -107,6 +136,12 @@ module Pattern = {
     };
 };
 
+module PatternComparator =
+  Belt.Id.MakeComparable({ 
+    type t = Pattern.t; 
+    let cmp = compare; 
+  });
+
 module Cuff = {
   type t =
     | Button
@@ -131,6 +166,12 @@ module Cuff = {
     };
 };
 
+module CuffComparator =
+  Belt.Id.MakeComparable({ 
+    type t = Cuff.t; 
+    let cmp = compare; 
+  });
+
 module Collar = {
   type t =
     | Button
@@ -152,6 +193,12 @@ module Collar = {
     | _ => None
     };
 };
+
+module CollarComparator =
+  Belt.Id.MakeComparable({ 
+    type t = Collar.t; 
+    let cmp = compare; 
+  });
 
 type order = {
   quantity: int,
@@ -229,12 +276,46 @@ let lineReducer = (acc: list(order), line: string): list(order) => {
   };
 };
 
-type colorMapType = Belt.Map.t(Color.t, int, ColorComparator.identity);
+type sizeMapType = Belt.Map.t(Size.t, int, SizeComparator.identity);
+let sizeReducer = (accumulatedMap: sizeMapType, item: order): sizeMapType
+ => {
+  let n = Belt.Map.getWithDefault(accumulatedMap, item.size, 0); 
+  Belt.Map.set(accumulatedMap, item.size, n + item.quantity);
+}
 
+type sleeveMapType = Belt.Map.t(Sleeve.t, int, SleeveComparator.identity);
+let sleeveReducer = (accumulatedMap: sleeveMapType, item: order): sleeveMapType
+ => {
+  let n = Belt.Map.getWithDefault(accumulatedMap, item.sleeve, 0); 
+  Belt.Map.set(accumulatedMap, item.sleeve, n + item.quantity);
+}
+
+type colorMapType = Belt.Map.t(Color.t, int, ColorComparator.identity);
 let colorReducer = (accumulatedMap: colorMapType, item: order): colorMapType
  => {
   let n = Belt.Map.getWithDefault(accumulatedMap, item.color, 0); 
   Belt.Map.set(accumulatedMap, item.color, n + item.quantity);
+}
+
+type collarMapType = Belt.Map.t(Collar.t, int, CollarComparator.identity);
+let collarReducer = (accumulatedMap: collarMapType, item: order): collarMapType
+ => {
+  let n = Belt.Map.getWithDefault(accumulatedMap, item.collar, 0); 
+  Belt.Map.set(accumulatedMap, item.collar, n + item.quantity);
+}
+
+type patternMapType = Belt.Map.t(Pattern.t, int, PatternComparator.identity);
+let patternReducer = (accumulatedMap: patternMapType, item: order): patternMapType
+ => {
+  let n = Belt.Map.getWithDefault(accumulatedMap, item.pattern, 0); 
+  Belt.Map.set(accumulatedMap, item.pattern, n + item.quantity);
+}
+
+type cuffMapType = Belt.Map.t(Cuff.t, int, CuffComparator.identity);
+let cuffReducer = (accumulatedMap: cuffMapType, item: order): cuffMapType
+ => {
+  let n = Belt.Map.getWithDefault(accumulatedMap, item.cuff, 0); 
+  Belt.Map.set(accumulatedMap, item.cuff, n + item.quantity);
 }
 
 let printStatistics = (orders: list(order)): unit => {
@@ -247,6 +328,62 @@ let printStatistics = (orders: list(order)): unit => {
   Belt.Map.forEach(colorDistribution,
     (key, value) => Js.log2(Color.toString(key), value) 
   );
+  let sizeDistribution = 
+    Belt.List.reduce(
+      orders,
+      Belt.Map.make(~id=(module SizeComparator)),
+      sizeReducer
+    );
+  Js.log2("Size","Quantity");
+  Belt.Map.forEach(sizeDistribution,
+    (key, value) => Js.log2(Size.toString(key), value) 
+  );
+
+ let sleeveDistribution = 
+    Belt.List.reduce(
+      orders,
+      Belt.Map.make(~id=(module SleeveComparator)),
+      sleeveReducer
+    );
+  Js.log2("Sleeve","Quantity");
+  Belt.Map.forEach(sleeveDistribution,
+    (key, value) => Js.log2(Sleeve.toString(key), value) 
+  );
+  
+ let collarDistribution = 
+    Belt.List.reduce(
+      orders,
+      Belt.Map.make(~id=(module CollarComparator)),
+      collarReducer
+    );
+  Js.log2("Collar","Quantity");
+  Belt.Map.forEach(collarDistribution,
+    (key, value) => Js.log2(Collar.toString(key), value) 
+  );
+
+  let cuffDistribution = 
+    Belt.List.reduce(
+      orders,
+      Belt.Map.make(~id=(module CuffComparator)),
+      cuffReducer
+    );
+  Js.log2("Cuff","Quantity");
+  Belt.Map.forEach(cuffDistribution,
+    (key, value) => Js.log2(Cuff.toString(key), value) 
+  );
+
+  let patternDistribution = 
+    Belt.List.reduce(
+      orders,
+      Belt.Map.make(~id=(module PatternComparator)),
+      patternReducer
+    );
+  Js.log2("Pattern","Quantity");
+  Belt.Map.forEach(patternDistribution,
+    (key, value) => Js.log2(Pattern.toString(key), value) 
+  );
+
+
 };
 
 let processFile = (inFileName: string): unit => {

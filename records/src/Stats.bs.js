@@ -55,10 +55,70 @@ function fromString(str) {
   }
 }
 
+function compareSize(a, b) {
+  var exit = 0;
+  if (typeof a === "number") {
+    exit = 1;
+  } else if (a.tag) {
+    var s1 = a[0];
+    if (typeof b === "number") {
+      return 1;
+    } else if (b.tag) {
+      var s2 = b[0];
+      if (s1 === s2) {
+        return 0;
+      } else {
+        var match = s1 < s2;
+        if (match) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+    } else {
+      exit = 1;
+    }
+  } else {
+    var s1$1 = a[0];
+    if (typeof b === "number" || b.tag) {
+      return -1;
+    } else {
+      var s2$1 = b[0];
+      if (s1$1 === s2$1) {
+        return 0;
+      } else {
+        var match$1 = s1$1 < s2$1;
+        if (match$1) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+    }
+  }
+  if (exit === 1) {
+    if (typeof b === "number") {
+      return Caml_obj.caml_compare(a, b);
+    } else if (b.tag) {
+      if (typeof a === "number") {
+        return -1;
+      } else {
+        return Caml_obj.caml_compare(a, b);
+      }
+    } else {
+      return 1;
+    }
+  }
+  
+}
+
 var Size = /* module */[
   /* toString */toString,
-  /* fromString */fromString
+  /* fromString */fromString,
+  /* compareSize */compareSize
 ];
+
+var SizeComparator = Belt_Id.MakeComparable(/* module */[/* cmp */compareSize]);
 
 function toString$1(sleeve) {
   switch (sleeve) {
@@ -90,6 +150,10 @@ var Sleeve = /* module */[
   /* toString */toString$1,
   /* fromString */fromString$1
 ];
+
+var cmp = Caml_obj.caml_compare;
+
+var SleeveComparator = Belt_Id.MakeComparable(/* module */[/* cmp */cmp]);
 
 function toString$2(color) {
   switch (color) {
@@ -130,9 +194,9 @@ var Color = /* module */[
   /* fromString */fromString$2
 ];
 
-var cmp = Caml_obj.caml_compare;
+var cmp$1 = Caml_obj.caml_compare;
 
-var ColorComparator = Belt_Id.MakeComparable(/* module */[/* cmp */cmp]);
+var ColorComparator = Belt_Id.MakeComparable(/* module */[/* cmp */cmp$1]);
 
 function toString$3(pattern) {
   switch (pattern) {
@@ -165,6 +229,10 @@ var Pattern = /* module */[
   /* toString */toString$3,
   /* fromString */fromString$3
 ];
+
+var cmp$2 = Caml_obj.caml_compare;
+
+var PatternComparator = Belt_Id.MakeComparable(/* module */[/* cmp */cmp$2]);
 
 function toString$4(cuff) {
   switch (cuff) {
@@ -199,6 +267,10 @@ var Cuff = /* module */[
   /* fromString */fromString$4
 ];
 
+var cmp$3 = Caml_obj.caml_compare;
+
+var CuffComparator = Belt_Id.MakeComparable(/* module */[/* cmp */cmp$3]);
+
 function toString$5(collar) {
   switch (collar) {
     case 0 : 
@@ -229,6 +301,10 @@ var Collar = /* module */[
   /* toString */toString$5,
   /* fromString */fromString$5
 ];
+
+var cmp$4 = Caml_obj.caml_compare;
+
+var CollarComparator = Belt_Id.MakeComparable(/* module */[/* cmp */cmp$4]);
 
 function optFloat(str) {
   var exit = 0;
@@ -382,16 +458,71 @@ function lineReducer(acc, line) {
   }
 }
 
+function sizeReducer(accumulatedMap, item) {
+  var n = Belt_Map.getWithDefault(accumulatedMap, item[/* size */1], 0);
+  return Belt_Map.set(accumulatedMap, item[/* size */1], n + item[/* quantity */0] | 0);
+}
+
+function sleeveReducer(accumulatedMap, item) {
+  var n = Belt_Map.getWithDefault(accumulatedMap, item[/* sleeve */2], 0);
+  return Belt_Map.set(accumulatedMap, item[/* sleeve */2], n + item[/* quantity */0] | 0);
+}
+
 function colorReducer(accumulatedMap, item) {
   var n = Belt_Map.getWithDefault(accumulatedMap, item[/* color */3], 0);
   return Belt_Map.set(accumulatedMap, item[/* color */3], n + item[/* quantity */0] | 0);
 }
 
+function collarReducer(accumulatedMap, item) {
+  var n = Belt_Map.getWithDefault(accumulatedMap, item[/* collar */6], 0);
+  return Belt_Map.set(accumulatedMap, item[/* collar */6], n + item[/* quantity */0] | 0);
+}
+
+function patternReducer(accumulatedMap, item) {
+  var n = Belt_Map.getWithDefault(accumulatedMap, item[/* pattern */4], 0);
+  return Belt_Map.set(accumulatedMap, item[/* pattern */4], n + item[/* quantity */0] | 0);
+}
+
+function cuffReducer(accumulatedMap, item) {
+  var n = Belt_Map.getWithDefault(accumulatedMap, item[/* cuff */5], 0);
+  return Belt_Map.set(accumulatedMap, item[/* cuff */5], n + item[/* quantity */0] | 0);
+}
+
 function printStatistics(orders) {
   var colorDistribution = Belt_List.reduce(orders, Belt_Map.make(ColorComparator), colorReducer);
   console.log("Color", "Quantity");
-  return Belt_Map.forEach(colorDistribution, (function (key, value) {
-                console.log(toString$2(key), value);
+  Belt_Map.forEach(colorDistribution, (function (key, value) {
+          console.log(toString$2(key), value);
+          return /* () */0;
+        }));
+  var sizeDistribution = Belt_List.reduce(orders, Belt_Map.make(SizeComparator), sizeReducer);
+  console.log("Size", "Quantity");
+  Belt_Map.forEach(sizeDistribution, (function (key, value) {
+          console.log(toString(key), value);
+          return /* () */0;
+        }));
+  var sleeveDistribution = Belt_List.reduce(orders, Belt_Map.make(SleeveComparator), sleeveReducer);
+  console.log("Sleeve", "Quantity");
+  Belt_Map.forEach(sleeveDistribution, (function (key, value) {
+          console.log(toString$1(key), value);
+          return /* () */0;
+        }));
+  var collarDistribution = Belt_List.reduce(orders, Belt_Map.make(CollarComparator), collarReducer);
+  console.log("Collar", "Quantity");
+  Belt_Map.forEach(collarDistribution, (function (key, value) {
+          console.log(toString$5(key), value);
+          return /* () */0;
+        }));
+  var cuffDistribution = Belt_List.reduce(orders, Belt_Map.make(CuffComparator), cuffReducer);
+  console.log("Cuff", "Quantity");
+  Belt_Map.forEach(cuffDistribution, (function (key, value) {
+          console.log(toString$4(key), value);
+          return /* () */0;
+        }));
+  var patternDistribution = Belt_List.reduce(orders, Belt_Map.make(PatternComparator), patternReducer);
+  console.log("Pattern", "Quantity");
+  return Belt_Map.forEach(patternDistribution, (function (key, value) {
+                console.log(toString$3(key), value);
                 return /* () */0;
               }));
 }
@@ -427,21 +558,31 @@ var myOrder = /* record */[
 ];
 
 exports.Size = Size;
+exports.SizeComparator = SizeComparator;
 exports.Sleeve = Sleeve;
+exports.SleeveComparator = SleeveComparator;
 exports.Color = Color;
 exports.ColorComparator = ColorComparator;
 exports.Pattern = Pattern;
+exports.PatternComparator = PatternComparator;
 exports.Cuff = Cuff;
+exports.CuffComparator = CuffComparator;
 exports.Collar = Collar;
+exports.CollarComparator = CollarComparator;
 exports.myOrder = myOrder;
 exports.optFloat = optFloat;
 exports.optInt = optInt;
 exports.map2 = map2;
 exports.lineReducer = lineReducer;
+exports.sizeReducer = sizeReducer;
+exports.sleeveReducer = sleeveReducer;
 exports.colorReducer = colorReducer;
+exports.collarReducer = collarReducer;
+exports.patternReducer = patternReducer;
+exports.cuffReducer = cuffReducer;
 exports.printStatistics = printStatistics;
 exports.processFile = processFile;
 exports.nodeArg = nodeArg;
 exports.progArg = progArg;
 exports.fileArg = fileArg;
-/* ColorComparator Not a pure module */
+/* SizeComparator Not a pure module */
