@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!--
+ ! Excerpted from "Web Development with ReasonML",
+ ! published by The Pragmatic Bookshelf.
+ ! Copyrights apply to this code. It may not be used to create training material,
+ ! courses, books, articles, and the like. Contact us if you are in doubt.
+ ! We make no guarantees that this code is fit for any purpose.
+ ! Visit http://www.pragmaticprogrammer.com/titles/reasonml for more book information.
+-->
+<html>
+<head>
+  <title>Monthly Payment Calculator</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <style type="text/css">
+    p { margin-top: 0.5em; margin-bottom: 0.5em; }
+  </style>
+</head>
+
+<body>
+  <h1>Monthly Payment Calculator</h1>
+
+  <p>
+  Principal: $ <input type="text" size="10" id="principal"/>
+  </p>
+  <p>
+  Annual Percentage Rate: <input type="text" size="7" id="apr"/> %
+  </p>
+  <p>
+  Number of years: <input type="text" size="4" id="years"/>
+  </p>
+  
+  <p>
+  Your monthly payment is $<span id="payment"></span>
+  </p>
+
+  <script type="text/javascript" src="LoanPayment.bs.js"></script>
+</body>
+</html>
+
