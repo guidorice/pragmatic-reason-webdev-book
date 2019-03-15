@@ -18,6 +18,7 @@
   "dependencies": {
     "@glennsl/bs-json": "^3.0.0",
     "bs-fetch": "^0.3.1",
-    "bs-webapi": "^0.13.5"
+    "bs-webapi": "^0.13.5",
+    "chart.js": "^2.8.0"
   }
 }
